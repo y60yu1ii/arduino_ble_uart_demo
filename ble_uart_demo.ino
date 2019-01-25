@@ -1,19 +1,20 @@
 #include <LBLE.h>
+//#include <LBLEPeriphral.h>
 #include "Arduino.h"
-#include "LBLEPeriphral.h"
+#include "CLBLEPeriphral.h"
 
-const int sensor = 14;//use photosensor as example, intput at pin14(analog)
+const int sensor = 14;
 const int usr_btn = 6;
-const int SAMPLE_RATE = 1000;
+const int SAMPLE_RATE = 500;
 String data;
-char* devName = "LumosBLE-UART";
+char* devName = "LBLE-test";
 
 char* serviceUUID = "00001802-0000-1000-8000-00805f9b34fb";
 LBLEUuid uuid(serviceUUID);
 
 LBLEService uartService(serviceUUID);
-LBLECharacteristicString txCharacteristic("00002a04-0000-1000-8000-00805f9b34fb", LBLE_READ | LBLE_WRITE);//Tx
-LBLECharacteristicString rxCharacteristic("00002a05-0000-1000-8000-00805f9b34fb", LBLE_READ | LBLE_WRITE);//Rx
+LBLECharacteristicString rxCharacteristic("00002a04-0000-1000-8000-00805f9b34fb", LBLE_READ | LBLE_WRITE);//Rx
+LBLECharacteristicString txCharacteristic("00002a05-0000-1000-8000-00805f9b34fb", LBLE_READ | LBLE_WRITE);//Rx
 
 void setup() {  
 
@@ -28,21 +29,22 @@ void setup() {
 
   String address = LBLE.getDeviceAddress().toString();
 
-  Serial.println("=== BLE ready ===");
-  Serial.print(devName);
-  Serial.print(" Address = [");
+  Serial.println("BLE ready");
+  Serial.print("Device Address = [");
   Serial.print(LBLE.getDeviceAddress());
   Serial.println("]");
-
+  Serial.print("BLE Name = ");
+  Serial.println(devName);
   
   CLBLEAdvertisementData advertisement;
-  advertisement.configAsConnectableWithPayload(devName, serviceUUID, 0);
+  advertisement.configAsConnectableWithPayload(devName, serviceUUID, 99);
 
-  LBLEPeripheral.setName(devName);
   
+  LBLEPeripheral.setName(devName);
+
   uartService.addAttribute(txCharacteristic);
   uartService.addAttribute(rxCharacteristic);
-  
+
   LBLEPeripheral.addService(uartService);
   
 
@@ -72,4 +74,11 @@ void loop() {
     LBLEPeripheral.advertise(advertisement);
     Serial.println(r);
   }
+
+  if(rxCharacteristic.isWritten()){
+    data = rxCharacteristic.getValue();
+    Serial.print("Rx=");
+    Serial.println(data);
+  }
+
 }
