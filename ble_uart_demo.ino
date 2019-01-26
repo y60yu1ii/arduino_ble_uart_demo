@@ -1,7 +1,6 @@
 #include <LBLE.h>
-//#include <LBLEPeriphral.h>
+#include <LBLEPeriphral.h>
 #include "Arduino.h"
-#include "CLBLEPeriphral.h"
 
 const int sensor = 14;
 const int usr_btn = 6;
@@ -36,8 +35,8 @@ void setup() {
   Serial.print("BLE Name = ");
   Serial.println(devName);
   
-  CLBLEAdvertisementData advertisement;
-  advertisement.configAsConnectableWithPayload(devName, serviceUUID, 99);
+  LBLEAdvertisementData advertisement;
+  advertisement.configAsConnectableDevice(devName, serviceUUID);
 
   
   LBLEPeripheral.setName(devName);
@@ -64,15 +63,10 @@ void loop() {
 //  Serial.println(LBLEPeripheral.connected());
   if(LBLEPeripheral.connected())
   {
-    String result = r;
-    txCharacteristic.setValue(result);
+
+    txCharacteristic.setValue("a");
     LBLEPeripheral.notifyAll(txCharacteristic);
-  }else{
-    CLBLEAdvertisementData advertisement;
-    advertisement.configAsConnectableWithPayload(devName, serviceUUID, r);
-    LBLEPeripheral.stopAdvertise();
-    LBLEPeripheral.advertise(advertisement);
-    Serial.println(r);
+  
   }
 
   if(rxCharacteristic.isWritten()){
