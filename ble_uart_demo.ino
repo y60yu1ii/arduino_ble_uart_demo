@@ -59,12 +59,12 @@ void loop() {
   delay(SAMPLE_RATE);
   int r = analogRead(sensor);
   Serial.println(r);
-//  Serial.print("conected=");
-//  Serial.println(LBLEPeripheral.connected());
+ Serial.print("conected=");
+ Serial.println(LBLEPeripheral.connected());
   if(LBLEPeripheral.connected())
   {
 
-    txCharacteristic.setValue("a");
+    txCharacteristic.setValue(String(r));
     LBLEPeripheral.notifyAll(txCharacteristic);
   
   }
