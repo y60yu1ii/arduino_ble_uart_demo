@@ -1,78 +1,48 @@
 #include <LBLE.h>
-#include <LBLEPeriphral.h>
 #include "Arduino.h"
+#include "EasyPeriphral.h"
 
 const int sensor = 14;
 const int usr_btn = 6;
 const int SAMPLE_RATE = 500;
 String data;
-char* devName = "LBLE-test";
-
-char* serviceUUID = "00001802-0000-1000-8000-00805f9b34fb";
-LBLEUuid uuid(serviceUUID);
-
-LBLEService uartService(serviceUUID);
-LBLECharacteristicString rxCharacteristic("00002a04-0000-1000-8000-00805f9b34fb", LBLE_READ | LBLE_WRITE);//Rx
-LBLECharacteristicString txCharacteristic("00002a05-0000-1000-8000-00805f9b34fb", LBLE_READ | LBLE_WRITE);//Rx
+EasyPeriphral peri;
 
 void setup() {  
-
   //Initialize serial and wait for port to open:
-  Serial.begin(9600);
-
+  Serial.begin(115200);
   // Initialize BLE subsystem
   LBLE.begin();
-  while (!LBLE.ready()) {
-    delay(100);
-  }
-
+  while (!LBLE.ready()) { delay(100); }
   String address = LBLE.getDeviceAddress().toString();
-
   Serial.println("BLE ready");
   Serial.print("Device Address = [");
   Serial.print(LBLE.getDeviceAddress());
   Serial.println("]");
-  Serial.print("BLE Name = ");
-  Serial.println(devName);
-  
-  LBLEAdvertisementData advertisement;
-  advertisement.configAsConnectableDevice(devName, serviceUUID);
 
-  
-  LBLEPeripheral.setName(devName);
-
-  uartService.addAttribute(txCharacteristic);
-  uartService.addAttribute(rxCharacteristic);
-
-  LBLEPeripheral.addService(uartService);
-  
-
-  LBLEPeripheral.advertise(advertisement);
-
-  LBLEPeripheral.begin();
-  
+  peri.setDeviceName("LBLE-HAHA");
+  peri.begin();
   pinMode(sensor, INPUT);
 
 }
 
 void loop() { 
-  delay(SAMPLE_RATE);
-  int r = analogRead(sensor);
-  Serial.println(r);
- Serial.print("conected=");
- Serial.println(LBLEPeripheral.connected());
-  if(LBLEPeripheral.connected())
-  {
+   delay(SAMPLE_RATE);
+   int r = analogRead(sensor);
+   Serial.println(r);
+   Serial.print("conected=");
+   Serial.println(peri.connected());
+   peri.broadcast(r)
+  // if(peri.connected())
+  // {
+    // txCharacteristic.setValue(String(r));
+    // LBLEPeripheral.notifyAll(txCharacteristic);
+  // }
 
-    txCharacteristic.setValue(String(r));
-    LBLEPeripheral.notifyAll(txCharacteristic);
-  
-  }
-
-  if(rxCharacteristic.isWritten()){
-    data = rxCharacteristic.getValue();
-    Serial.print("Rx=");
-    Serial.println(data);
-  }
+  // if(rxCharacteristic.isWritten()){
+  //   data = rxCharacteristic.getValue();
+  //   Serial.print("Rx=");
+  //   Serial.println(data);
+  // }
 
 }
