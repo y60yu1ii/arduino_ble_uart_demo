@@ -1,5 +1,5 @@
 #include <LBLE.h>
-#include <CLBLEPeriphral.h>
+#include "CLBLEPeriphral.h"
 #include "Arduino.h"
 #include "EasyPeriphral.h"
 
@@ -33,9 +33,13 @@ void EasyPeriphral::setDeviceName(char* devName){
     name = devName;
 }
 
-void EasyPeriphral:broadcast(int_16_t number){
+void EasyPeriphral::broadcast(int number){
     CLBLEAdvertisementData advertisement;
     advertisement.configAsConnectableWithPayload(name, serviceUUID, number);
     LBLEPeripheral.stopAdvertise();
     LBLEPeripheral.advertise(advertisement);
+}
+
+bool EasyPeriphral::connected(){
+    return LBLEPeripheral.connected();
 }

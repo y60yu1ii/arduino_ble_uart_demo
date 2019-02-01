@@ -9,7 +9,7 @@ public:
         ~EasyPeriphral();
         void begin();
         void setDeviceName(char* name);
-        void broadcast(int_16_t number);
+        void broadcast(int number);
         bool connected();
 };
  

@@ -32,17 +32,5 @@ void loop() {
    Serial.println(r);
    Serial.print("conected=");
    Serial.println(peri.connected());
-   peri.broadcast(r)
-  // if(peri.connected())
-  // {
-    // txCharacteristic.setValue(String(r));
-    // LBLEPeripheral.notifyAll(txCharacteristic);
-  // }
-
-  // if(rxCharacteristic.isWritten()){
-  //   data = rxCharacteristic.getValue();
-  //   Serial.print("Rx=");
-  //   Serial.println(data);
-  // }
-
+   peri.broadcast(r);
 }
